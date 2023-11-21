@@ -3,6 +3,7 @@
   justify-content: center;
   width: 100%;
   margin-top: 64px;
+  background-color: black;
 }
 
 .dataContainer {
@@ -10,18 +11,22 @@
   flex-direction: column;
   justify-content: center;
   max-width: 600px;
+  background-color: black;
 }
 
 .header {
   text-align: center;
   font-size: 32px;
   font-weight: 600;
+  background-color: black;
+  color: white;
 }
 
 .bio {
   text-align: center;
-  color: gray;
+  color: white;
   margin-top: 16px;
+  background-color: black;
 }
 
 .waveButton {
@@ -31,4 +36,8 @@
   border: 0;
   border-radius: 5px;
   
+}
+
+body {
+  background-color: black;
 }
