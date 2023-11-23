@@ -10,7 +10,59 @@ const App = () => {
   const contractABI = abi.abi;
   const [allWaves, setAllWaves] = useState([]);
   const [network, setNetwork] = useState('');
-  const shouldRenderChangeNetworkButton = network !== 'Polygon Mumbai Testnet';
+
+  const GUI = () =>{
+    if (network !== 'Polygon Mumbai Testnet') {
+      return (
+      <div className="connect-wallet-container">
+        <p style={{ color: 'white', textAlign: 'center'}}>Please connect to Polygon Mumbai Testnet</p>
+        <button className='cta-button mint-button' onClick={switchNetwork}>Click here to switch</button>
+      </div>
+      );
+    }
+
+    return (
+      <div className="mainContainer">
+        <div className="dataContainer">
+          <div className="header">
+            👋 Hey there!
+          </div>
+    
+          <div className="bio">
+            My 1st Blockchain Project - Connect your wallet and wave at me
+          </div>
+    
+          <button className="waveButton" onClick={wave}>
+            Wave at Me
+          </button>
+    
+          <button className="waveButton" onClick={getAndDisplayAllWaves}>
+            Get Recent Waves
+          </button>
+  
+          {allWaves.length > 0 && (
+            <button className="waveButton" onClick={clearWaves}>
+              Clear Waves
+            </button>
+          )}
+    
+          {!currentAccount && (
+            <button className="waveButton" onClick={connectWallet}>
+              Connect Wallet
+            </button>
+          )}
+    
+          {allWaves.map((wave, index) => (
+            <div key={index} style={{ backgroundColor: "Gray", marginTop: "16px", padding: "8px" }}>
+              <div>Address: {wave.address}</div>
+              <div>Time: {wave.timestamp.toString()}</div>
+              <div>Message: {wave.message}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   const connectWallet = async () => {
     try {
@@ -210,57 +262,7 @@ const App = () => {
     checkIfWalletIsConnected();
   }, [network]);
   
-
-  return (
-    <div className="mainContainer">
-      <div className="dataContainer">
-        <div className="header">
-          👋 Hey there!
-        </div>
-  
-        <div className="bio">
-          My 1st Blockchain Project - Connect your wallet and wave at me
-        </div>
-  
-        <button className="waveButton" onClick={wave}>
-          Wave at Me
-        </button>
-  
-        <button className="waveButton" onClick={getAndDisplayAllWaves}>
-          Get Recent Waves
-        </button>
-
-        {allWaves.length > 0 && (
-          <button className="waveButton" onClick={clearWaves}>
-            Clear Waves
-          </button>
-        )}
-  
-        {!currentAccount && (
-          <button className="waveButton" onClick={connectWallet}>
-            Connect Wallet
-          </button>
-        )}
-
-        {shouldRenderChangeNetworkButton && (
-          <div className="connect-wallet-container">
-            <p>Please connect to Polygon Mumbai Testnet</p>
-            <button className='cta-button mint-button' onClick={switchNetwork}>
-              Click here to switch
-            </button>
-          </div>
-        )}
-  
-        {allWaves.map((wave, index) => (
-          <div key={index} style={{ backgroundColor: "Gray", marginTop: "16px", padding: "8px" }}>
-            <div>Address: {wave.address}</div>
-            <div>Time: {wave.timestamp.toString()}</div>
-            <div>Message: {wave.message}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  return GUI();
 }
 
 export default App;
