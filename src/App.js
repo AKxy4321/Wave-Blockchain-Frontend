@@ -174,7 +174,7 @@ const App = () => {
         await waveTxn.wait();
         console.log("Mined -- ", waveTxn.hash);
         
-        alert("You have sent a wave!");
+        alert("You have sent a wave! 15min cooldown initiated");
       } else {
         console.log("Ethereum object doesn't exist!");
       }
