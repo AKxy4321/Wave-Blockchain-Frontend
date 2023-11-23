@@ -4,58 +4,31 @@ import { ethers } from "ethers";
 import abi from "./utils/WavePortal.json";
 import { networks } from './utils/networks';
 
-const getEthereumObject = () => window.ethereum;
-
-const findMetaMaskAccount = async () => {
-  try {
-    const ethereum = getEthereumObject();
-    if (!ethereum) {
-      console.error("Make sure you have Metamask!");
-      return null;
-    }
-
-    console.log("We have the Ethereum object", ethereum);
-    const accounts = await ethereum.request({ method: "eth_accounts" });
-
-    if (accounts.length !== 0) {
-      const account = accounts[0];
-      console.log("Found an authorized account:", account);
-      return account;
-    } else {
-      console.error("No authorized account found");
-      return null;
-    }
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-};
-
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
   const contractAddress = "0xEf25ba77a2Fb8d5bAEC5B920CB6882cbbfE023cc";
   const contractABI = abi.abi;
   const [allWaves, setAllWaves] = useState([]);
   const [network, setNetwork] = useState('');
+  const shouldRenderChangeNetworkButton = network !== 'Polygon Mumbai Testnet';
 
   const connectWallet = async () => {
     try {
-      const ethereum = getEthereumObject();
+      const { ethereum } = window;
+
       if (!ethereum) {
-        alert("Get MetaMask!");
+        alert("Get MetaMask -> https://metamask.io/");
         return;
       }
-
-      const accounts = await ethereum.request({
-        method: "eth_requestAccounts",
-      });
-
-      console.log("Connected", accounts[0]);
-      setCurrentAccount(accounts[0]);
+      const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+      
+	  const account = accounts[0];
+      console.log("Connected", account);
+      setCurrentAccount(account);
     } catch (error) {
-      console.error(error);
+      console.log(error)
     }
-  };
+  }
 
   const checkIfWalletIsConnected = async () => {
     const { ethereum } = window;
@@ -222,11 +195,8 @@ const App = () => {
     };
   
     (async () => {
-      const account = await findMetaMaskAccount();
-      if (account !== null) {
-        setCurrentAccount(account);
-        await initializeContract(); // Initialize contract after getting the account
-      }
+      await connectWallet();
+      await initializeContract(); // Initialize contract after getting the account     
     })();
   
     return () => {
@@ -234,28 +204,10 @@ const App = () => {
         wavePortalContract.off("NewWave", onNewWave);
       }
     };
-  }, []);  
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const account = await findMetaMaskAccount();
-      if (account !== null) {
-        setCurrentAccount(account);
-      }
-    };
-  
-    fetchData();
   }, []);
 
   useEffect(() => {
     checkIfWalletIsConnected();
-    if (network !== 'Polygon Mumbai Testnet') {
-      return (
-      <div className="connect-wallet-container">
-        <p>Please connect to Polygon Mumbai Testnet</p>
-        <button className='cta-button mint-button' onClick={switchNetwork}>Click here to switch</button>
-      </div>)
-    }
   }, [network]);
   
 
@@ -288,6 +240,15 @@ const App = () => {
           <button className="waveButton" onClick={connectWallet}>
             Connect Wallet
           </button>
+        )}
+
+        {shouldRenderChangeNetworkButton && (
+          <div className="connect-wallet-container">
+            <p>Please connect to Polygon Mumbai Testnet</p>
+            <button className='cta-button mint-button' onClick={switchNetwork}>
+              Click here to switch
+            </button>
+          </div>
         )}
   
         {allWaves.map((wave, index) => (
